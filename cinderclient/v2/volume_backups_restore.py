@@ -31,13 +31,14 @@ class VolumeBackupRestoreManager(base.Manager):
     """Manage :class:`VolumeBackupsRestore` resources."""
     resource_class = VolumeBackupsRestore
 
-    def restore(self, backup_id, volume_id=None):
+    def restore(self, backup_id, volume_id=None, volume_size=None):
         """Restore a backup to a volume.
 
         :param backup_id: The ID of the backup to restore.
         :param volume_id: The ID of the volume to restore the backup to.
+        :param size: The size of the volume to which the restore needs to be done.
         :rtype: :class:`Restore`
         """
-        body = {'restore': {'volume_id': volume_id}}
+        body = {'restore': {'volume_id': volume_id, 'volume_size': volume_size}}
         return self._create("/backups/%s/restore" % backup_id,
                             body, "restore")
