@@ -19,6 +19,9 @@ Volume Backups interface (1.1 extension).
 
 from cinderclient import base
 
+SORT_DIR_VALUES = ('asc', 'desc')
+SORT_KEY_VALUES = ('id', 'status', 'size', 'name', 'created_at')
+
 
 class VolumeBackup(base.Resource):
     """A volume backup is a block level backup of a volume."""
@@ -58,15 +61,63 @@ class VolumeBackupManager(base.ManagerWithFind):
         """
         return self._get("/backups/%s" % backup_id, "backup")
 
-    def list(self, detailed=True):
+    def list(self, detailed=True, search_opts=None, marker=None, limit=None,
+             sort_key=None, sort_dir=None):
         """Get a list of all volume backups.
 
+        :param detailed: Whether to return detailed volume backup info.
+        :param search_opts: Search options to filter out volume backups.
+        :param marker: Begin returning volume backups that appear later in the volume backup
+                       list than that represented by this backup id.
+        :param limit: Maximum number of volume backups to return.
+        :param sort_key: Key to be sorted.
+        :param sort_dir: Sort direction, should be 'desc' or 'asc'.
         :rtype: list of :class:`VolumeBackup`
         """
-        if detailed is True:
-            return self._list("/backups/detail", "backups")
+
+        if search_opts is None:
+            search_opts = {}
+
+        qparams = {}
+
+        for opt, val in six.iteritems(search_opts):
+            if val:
+                qparams[opt] = val
+
+        if marker:
+            qparams['marker'] = marker
+
+        if limit:
+            qparams['limit'] = limit
+
+        if sort_key is not None:
+            if sort_key in SORT_KEY_VALUES:
+                qparams['sort_key'] = sort_key
+            else:
+                raise ValueError('sort_key must be one of the following: %s.'
+                                 % ', '.join(SORT_KEY_VALUES))
+
+        if sort_dir is not None:
+            if sort_dir in SORT_DIR_VALUES:
+                qparams['sort_dir'] = sort_dir
+            else:
+                raise ValueError('sort_dir must be one of the following: %s.'
+                                 % ', '.join(SORT_DIR_VALUES))
+
+        # Transform the dict to a sequence of two-element tuples in fixed
+        # order, then the encoded string will be consistent in Python 2&3.
+        if qparams:
+            new_qparams = sorted(qparams.items(), key=lambda x: x[0])
+            query_string = "?%s" % urlencode(new_qparams)
         else:
-            return self._list("/backups", "backups")
+            query_string = ""
+
+        detail = ""
+        if detailed:
+            detail = "/detail"
+
+        return self._list("/backups%s%s" % (detail, query_string),
+                          "backups")
 
     def delete(self, backup):
         """Delete a volume backup.
