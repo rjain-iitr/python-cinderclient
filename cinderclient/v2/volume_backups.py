@@ -16,7 +16,7 @@
 """
 Volume Backups interface (1.1 extension).
 """
-
+import six
 from cinderclient import base
 
 SORT_DIR_VALUES = ('asc', 'desc')
