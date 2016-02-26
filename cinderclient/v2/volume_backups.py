@@ -18,6 +18,7 @@ Volume Backups interface (1.1 extension).
 """
 import six
 from cinderclient import base
+from urllib import urlencode
 
 SORT_DIR_VALUES = ('asc', 'desc')
 SORT_KEY_VALUES = ('id', 'status', 'size', 'name', 'created_at')
