@@ -169,6 +169,7 @@ class HTTPClient(object):
         self.retries = int(retries or 0)
         self.http_log_debug = http_log_debug
 
+	self.request_id=None
         self.management_url = None
         self.auth_token = None
         self.proxy_token = proxy_token
@@ -224,6 +225,8 @@ class HTTPClient(object):
         kwargs.setdefault('headers', kwargs.get('headers', {}))
         kwargs['headers']['User-Agent'] = self.USER_AGENT
         kwargs['headers']['Accept'] = 'application/json'
+        if self.request_id:
+            kwargs['headers']['request_id'] = '%s'%(self.request_id)
         if 'body' in kwargs:
             kwargs['headers']['Content-Type'] = 'application/json'
             kwargs['data'] = json.dumps(kwargs['body'])
