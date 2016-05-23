@@ -169,7 +169,8 @@ class HTTPClient(object):
         self.retries = int(retries or 0)
         self.http_log_debug = http_log_debug
 
-	self.request_id=None
+        self.request_id=None
+        self.user_id=None
         self.management_url = None
         self.auth_token = None
         self.proxy_token = proxy_token
@@ -227,6 +228,11 @@ class HTTPClient(object):
         kwargs['headers']['Accept'] = 'application/json'
         if self.request_id:
             kwargs['headers']['request_id'] = '%s'%(self.request_id)
+        if self.user_id:
+            kwargs['headers']['user_id'] = '%s'%(self.user_id)
+        if self.projectid:
+            kwargs['headers']['project_id'] = '%s'%(self.projectid)
+
         if 'body' in kwargs:
             kwargs['headers']['Content-Type'] = 'application/json'
             kwargs['data'] = json.dumps(kwargs['body'])
@@ -262,7 +268,7 @@ class HTTPClient(object):
         backoff = 1
         while True:
             attempts += 1
-            if not self.management_url or not self.auth_token:
+            if not self.management_url :
                 self.authenticate()
             kwargs.setdefault('headers', {})['X-Auth-Token'] = self.auth_token
             if self.projectid:
