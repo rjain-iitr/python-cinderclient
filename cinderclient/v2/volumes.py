@@ -170,7 +170,7 @@ class VolumeManager(base.ManagerWithFind):
                volume_type=None, user_id=None,
                project_id=None, availability_zone=None,
                metadata=None, imageRef=None, scheduler_hints=None,
-               source_replica=None):
+               source_replica=None,encrypted=False):
         """Creates a volume.
 
         :param size: Size of volume in GB
@@ -211,6 +211,7 @@ class VolumeManager(base.ManagerWithFind):
                            'imageRef': imageRef,
                            'source_volid': source_volid,
                            'source_replica': source_replica,
+                           'encrypted': encrypted,
                            }}
 
         if scheduler_hints:
