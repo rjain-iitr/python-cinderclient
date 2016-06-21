@@ -160,6 +160,10 @@ class Volume(base.Resource):
         """Sync the secondary volume with primary for a relationship."""
         self.manager.reenable(volume)
 
+    def get_plain_text_key(self, project_id,encrypted_key):
+        """get plainTextKey for volume"""
+        return self.manager.get_plain_text_key(self,project_id,encrypted_key)
+
 
 class VolumeManager(base.ManagerWithFind):
     """Manage :class:`Volume` resources."""
@@ -520,3 +524,9 @@ class VolumeManager(base.ManagerWithFind):
     def reenable(self, volume):
         """Sync the secondary volume with primary for a relationship."""
         return self._action('os-reenable-replica', volume, None)
+    
+    def get_plain_text_key(self, project_id,encrypted_key):
+        """get plain text key for encrypted key"""
+        return self._action('os-get-plain-text', volume,
+                                             {'project_id': project_id,
+                                               'encrypted_key': encrypted_key})
