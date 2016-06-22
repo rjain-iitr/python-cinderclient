@@ -527,6 +527,6 @@ class VolumeManager(base.ManagerWithFind):
     
     def get_plain_text_key(self, project_id,encrypted_key):
         """get plain text key for encrypted key"""
-        return self._action('os-get-plain-text', volume,
+        return self._action('os-get-plain-text', None,
                                              {'project_id': project_id,
                                                'encrypted_key': encrypted_key})
