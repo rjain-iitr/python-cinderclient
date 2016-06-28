@@ -39,6 +39,6 @@ class VolumeBackupRestoreManager(base.Manager):
         :param size: The size of the volume to which the restore needs to be done.
         :rtype: :class:`Restore`
         """
-        body = {'restore': {'volume_id': volume_id, 'volume_size': volume_size ,'name':name,'description':description}}
+        body = {'restore': {'volume_id': volume_id, 'volume_size': volume_size ,'name':name,'description':description,'volume_type':volume_type}}
         return self._create("/backups/%s/restore" % backup_id,
                             body, "restore")
